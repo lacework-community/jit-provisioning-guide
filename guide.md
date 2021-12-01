@@ -302,20 +302,11 @@ Example profile:
 
 
 
-* [Lacework Docs on Okta SAML IDP](https://docs.lacework.com/okta-as-a-saml-idp )
-* [Lacework Docs SAML configuration](https://docs.lacework.com/saml-configuration )
-* [https://lacework.zendesk.com/agent/search/1?type=ticket&q=JIT](https://lacework.zendesk.com/agent/search/1?type=ticket&q=JIT) 
-* [https://docs.lacework.com/saml-jit-overview](https://docs.lacework.com/saml-jit-overview) 
-* [https://support.lacework.com/hc/en-us/articles/360041774074-SAML-JIT-Overview](https://support.lacework.com/hc/en-us/articles/360041774074-SAML-JIT-Overview)
-* [https://docs.lacework.com/saml-configuration](https://docs.lacework.com/saml-configuration) 
-
-
-## Example of Okta provider Terraform file
-
-
-```
-// TODO
-```
+* [Lacework Docs on Okta SAML IDP](https://docs.lacework.com/okta-as-a-saml-idp)
+* [Lacework Docs SAML configuration](https://docs.lacework.com/saml-configuration)
+* [JIT Tickets](https://lacework.zendesk.com/agent/search/1?type=ticket&q=JIT) 
+* [SAML JIT Overview](https://docs.lacework.com/saml-jit-overview) 
+* [SAML Configuration](https://docs.lacework.com/saml-configuration) 
 
 
 
