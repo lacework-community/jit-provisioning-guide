@@ -11,7 +11,7 @@ SAML JIT user provisioning is achieved via attribute definitions in the SAML ide
 
 
 
-* Follow the [Principle of Least Privilege](https://us-cert.cisa.gov/bsi/articles/knowledge/principles/least-privilege#:~:text=The%20Principle%20of%20Least%20Privilege%20states%20that%20a%20subject%20should,control%20the%20assignment%20of%20rights) (PoLP). Review the [Lacework role-based access control (RBAC](#lacework-rbac)) in the appendix.
+* Follow the [Principle of Least Privilege](https://us-cert.cisa.gov/bsi/articles/knowledge/principles/least-privilege#:~:text=The%20Principle%20of%20Least%20Privilege%20states%20that%20a%20subject%20should,control%20the%20assignment%20of%20rights) (PoLP). Review the [Lacework role-based access control (RBAC)](https://github.com/lacework-community/jit-provisioning-guide/blob/main/guide.md#lacework-rbac) in the appendix.
 
 
 ## Limitations
@@ -33,7 +33,7 @@ The provider is responsible for most of this effort. This section describes the 
 
 
 * Use the [Okta Terraform provider](https://registry.terraform.io/providers/okta/okta/latest/docs).
-* Use the identity provider metadata XML file to minimize human error. See [example-okta-idp-metadata.xml](https://github.com/lacework-community/jit-provisioning-guide/blob/main/guide.md#okta-example-okta-idp-metadataxml).
+* Use the identity provider metadata XML file to minimize human error. See example-okta-idp-metadata.xml.
 
 ### Steps
 #### Configure Okta (via Terraform)
@@ -112,15 +112,15 @@ resource "okta_app_saml" "dianademo-tfapp" {
 }
 ```
 
-3. In the terminal, run terraform apply. Example output:
+3. In the terminal, run `terraform apply`. Example output:
 
 ```
 okta_app_saml.dianademo-tfapp: Creating...
 okta_app_saml.dianademo-tfapp: Creation complete after 2s [id=0oa4cr8udw13tOrQE696]
 ```
 
-4. Save the application ID (0oa4cr8udw13tOrQE696).
-5. Obtain the metadata by calling the okta_app_metadata_saml data source and outputting it:
+4. Save the application ID (`0oa4cr8udw13tOrQE696`).
+5. Obtain the metadata by calling the `okta_app_metadata_saml` data source and outputting it:
 
 ```
 data "okta_app_metadata_saml" "dianademo" {
@@ -138,8 +138,7 @@ output "dianademo" {
 terraform refresh
 terraform output -json | jq  .dianademo.value -r > example-metadata.xml
 ```
-7. Add custom Lacework attributes to a profile. If you have a specific profile attached to each application, add the attributes as shown in step i; otherwise, add the attributes directly to Okta users as shown in step ii below:
-    * Add custom Lacework attributes to the application user profile.
+7. Add custom Lacework attributes to a profile. If you have a specific profile attached to each application, add the attributes to the application user profile as shown  below. 
 
 ```
 App user schema custom attributes
@@ -184,8 +183,52 @@ resource "okta_app_user_schema_property" "laceworkOrgUserRole" {
   scope       = "NONE"
 }
 ```
-8. [Optional] Prepare to test the configuration. We’ll add a dummy person to Okta and grant them access to the Lacework application. Make sure to use a valid email because we’ll need to activate this user. The test occurs at the end of [step 2](#configure-lacework-via-the-user-interface) as it requires the Lacework platform to be configured.
-    * Add a user using the `okta_user` resource. 
+If you do not have a specific profile attached, add the Lacework attributes to the Okta profile as shown below. 
+
+```
+# Okta user schema custom attributes
+resource "okta_user_schema_property" "company" {
+  index       = "company"
+  title       = "Company"
+  type        = "string"
+  master      = "PROFILE_MASTER"
+  scope       = "NONE"
+}
+resource "okta_user_schema_property" "laceworkAdminRoleAccounts" {
+  index       = "laceworkAdminRoleAccounts"
+  title       = "Lacework Admin Role Accounts"
+  type        = "string"
+  master      = "PROFILE_MASTER"
+  scope       = "NONE"
+}
+resource "okta_user_schema_property" "laceworkUserRoleAccounts" {
+  index       = "laceworkUserRoleAccounts"
+  title       = "Lacework User Role Accounts"
+  type        = "string"
+  master      = "PROFILE_MASTER"
+  scope       = "NONE"
+}
+resource "okta_user_schema_property" "laceworkOrgAdminRole" {
+  index       = "laceworkOrgAdminRole"
+  title       = "Lacework Organization Admin Role"
+  type        = "boolean"
+  master      = "PROFILE_MASTER"
+  scope       = "NONE"
+}
+resource "okta_user_schema_property" "laceworkOrgUserRole" {
+  index       = "laceworkOrgUserRole"
+  title       = "Lacework Organization User Role"
+  type        = "boolean"
+  master      = "PROFILE_MASTER"
+  scope       = "NONE"
+}
+```
+
+    
+    
+
+8. [Optional] Prepare to test the configuration. We’ll add a dummy person to Okta and grant them access to the Lacework application. Make sure to use a valid email because we’ll need to activate this user. The test occurs at the end of step 2 as it requires the Lacework platform to be configured.
+* Add a user using the `okta_user` resource. 
     
 ```  
 resource "okta_user" "dummy_user" {
@@ -197,8 +240,8 @@ resource "okta_user" "dummy_user" {
 }
 ```
 
-9. Apply the changes to obtain the id. This is used in the next step as the user_id.
-10. Grant the user access to the Lacework app.
+* Apply the changes to obtain the id. This is used in the next step as the user_id.
+* Grant the user access to the Lacework app.
 
 ```
 # Save profile to send to the LW App
@@ -214,45 +257,39 @@ resource "okta_app_user" "dummy_lw_user" {
   profile =  "{\"company\":\"Cerise Laboratory\",\"laceworkOrgAdminRole\":true,\"firstName\":\"Ash\",\"lastName\":\"Ketchum\"}"
 }
 ```
-11. Activate the Okta Account. To do this, open the dummy user’s inbox and select the **Welcome to Okta!** email. Click the **activation** button. This will redirect you to create a password.
-12. Apply all the changes:
+* Activate the Okta Account. To do this, open the dummy user’s inbox and select the **Welcome to Okta!** email. Click the **activation** button. This will redirect you to create a password.
+
+9. Apply all the changes:
     * In the terminal, run `terraform apply`.
     * Confirm with `yes`. 
 
 #### Configure Lacework (via the user interface)
 As per the current limitations, only one auth mode can be enabled. Ensure you’ve disabled all auth configurations before continuing.  
 
-1. Configure Lacework (via the user interface)
+1. Open https://YOUR-ORG.lacework.net/ui/investigation/settings 
+2. Navigate to the “Authentication” page.
+3. If you have an existing Okta SAML auth configured and want to change it to allow for JIT, follow these instructions:
 
-    As per the current limitations, only one auth mode can be enabled. Ensure you’ve disabled all auth configurations before continuing.  
-
-    * Open https://YOUR-ORG.lacework.net/ui/investigation/settings 
-    * Navigate to the “Authentication” page.
-    * To update:
-
-        If you have an existing Okta SAML auth configured and want to change it to allow for JIT, follow these instructions:
-
-        * Check existing SAML.
-        * Click **Edit.**
-        * Select **Upload identity provider data.**
-        * Name it **Okta**.
-        * Browse and upload metadata file.
-        * Enable **Just-In-Time User Provisioning**.
-        * Click **Save.**
-    * To create:
-
-        If you have an existing Okta SAML auth configured and would like to change it to allow for JIT, follow these instructions:
-
-        * Click **Create New.**
-        * **Select** SAML.
-        * Select **Upload identity provider data.**
-        * Name it **Okta_._**
-        * Browse and upload metadata file.
-        * Enable **Just-In-Time User Provisioning**.
-        * Click **Save.**
-    * [Optional] Test Okta SAML JIT
-
-        If you created a dummy user, you can now attempt to login to the Lacework platform with their credentials. It may take a few seconds for the profile to create, but once that completes, our dummy user has access to the platform. Example screenshot:
+* To update: 
+  * Check existing SAML.
+  * Click **Edit.**
+  * Select **Upload identity provider data.**
+  * Name it **Okta**.
+  * Browse and upload metadata file.
+  * Enable **Just-In-Time User Provisioning**.
+  * Click **Save.**
+    
+* To create:
+  * Click **Create New.**
+  * **Select** SAML.
+  * Select **Upload identity provider data.**
+  * Name it **Okta_._**
+  * Browse and upload metadata file.
+  * Enable **Just-In-Time User Provisioning**.
+  * Click **Save.**
+    
+4. [Optional] Test Okta SAML JIT
+* If you created a dummy user, you can now attempt to login to the Lacework platform with their credentials. It may take a few seconds for the profile to create, but once that completes, our dummy user has access to the platform. Example screenshot:
 
 ![JIT screenshot 1](https://github.com/lacework-community/jit-provisioning-guide/blob/main/JIT-screenshot-1.png)
 
@@ -286,7 +323,13 @@ Example profile:
 
 
 ```
-<?xml version="1.0" encoding="UTF-8"?><md:EntityDescriptor entityID="http://www.okta.com/exk4c49uaIMvKMSKH696" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"><md:IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"><md:KeyDescriptor use="signing"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDqDCCApCgAwIBAgIGAXyK4LUGMA0GCSqGSIb3DQEBCwUAMIGUMQswCQYDVQQGEwJVUzETMBEG
+<?xml version="1.0" encoding="UTF-8"?><md:EntityDescriptor  
+entityID="http://www.okta.com/exk4c49uaIMvKMSKH696"  
+xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"><md:IDPSSODescriptor  
+WantAuthnRequestsSigned="false"  
+protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"><md:KeyDescriptor  
+use="signing"><ds:KeyInfo  
+xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>.  MIIDqDCCApCgAwIBAgIGAXyK4LUGMA0GCSqGSIb3DQEBCwUAMIGUMQswCQYDVQQGEwJVUzETMBEG
 A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
 MBIGA1UECwwLU1NPUHJvdmlkZXIxFTATBgNVBAMMDGxhY2V3b3JrZGVtbzEcMBoGCSqGSIb3DQEJ
 ARYNaW5mb0Bva3RhLmNvbTAeFw0yMTEwMTYyMDUxMzRaFw0zMTEwMTYyMDUyMzRaMIGUMQswCQYD
@@ -302,7 +345,7 @@ KJO2quJTV5pV1E2sZFvuJJuQhYbHRT1iZ+jGpcbP1uNTgwNc0poK5L3MRwHSXR27QrgdixfB9gya
 JUqjr/xzbcHv8T2cR9jpZUwETd7PfACCYEzsWzwOD7re54Fk/OUNUVHvclGB5LhCKezeQwa+TGrM
 lHwRKeRwPC1B/CMnGTyG0oNP4zwOJm6hhzHZlRa0Iukhi6+zGuNsOlp/7HJ8ukEMAGUg9auM7BB5
 Sb9lcbTeBNjRkabY7uMplJ5l9OGEoWGIzUVk/yjY5MjuLeyAFvQ+PUSTM/ImTZcL7OCR38zcdeyW
-WGpb78GFZ2RzWv4hr22vQDgnqsDiyGMw/dSp2w==</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://laceworkdemo.okta.com/app/laceworkdemo_dianademoapp_1/exk4c49uaIMvKMSKH696/sso/saml"/><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://laceworkdemo.okta.com/app/laceworkdemo_dianademoapp_1/exk4c49uaIMvKMSKH696/sso/saml"/></md:IDPSSODescriptor></md:EntityDescriptor>
+WGpb78GFZ2RzWv4hr22vQDgnqsDiyGMw/dSp2w==</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat><md:SingleSignOnService   Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"   Location="https://laceworkdemo.okta.com/app/laceworkdemo_dianademoapp_1/exk4c49uaIMvKMSKH696/sso/saml"/><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"   Location="https://laceworkdemo.okta.com/app/laceworkdemo_dianademoapp_1/exk4c49uaIMvKMSKH696/sso/saml"/></md:IDPSSODescriptor></md:EntityDescriptor>
 ```
 
 
