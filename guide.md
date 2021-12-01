@@ -1,20 +1,20 @@
 # Lacework Auth: Just-In-Time  Provisioning Guide
 
-# Overview
+## Overview
 
 Lacework’s authentication via Security Assertion Markup Language (SAML) supports Just-in-Time (JIT) user provisioning. Enabling this option allows for on-the-fly creation of a Lacework user account upon the first successful login to Lacework. This eliminates the need to create users in advance. For example, a new employee added to your company’s identity provider wouldn’t need to manually create an account to access Lacework.
 
-SAML JIT user provisioning is achieved via attribute definitions in the SAML identity provider. Navigate to your provider (e.g., Okta) in the following sections for guidelines.
+SAML JIT user provisioning is achieved via attribute definitions in the SAML identity provider. This guide currently includes guidelines for the Okta identity provider; G Suite (Google) and Azure AD identity provider guidelines will be added soon. 
 
 
-# Best practices
+## Best practices
 
 
 
-* Follow the [Principle of Least Privilege](https://en.wikipedia.org/wiki/Principle_of_least_privilege) (PoLP). Review the [Lacework role-based access control (RBAC](#lacework-rbac)) in the appendix. 
+* Follow the [Principle of Least Privilege](https://en.wikipedia.org/wiki/Principle_of_least_privilege) (PoLP). Review the [Lacework role-based access control (RBAC](#lacework-rbac)) in the [appendix](https://github.com/lacework-community/jit-provisioning-guide/blob/main/appendix.md). 
 
 
-# Limitations
+## Limitations
 
 
 
@@ -23,20 +23,20 @@ SAML JIT user provisioning is achieved via attribute definitions in the SAML ide
 * The Lacework platform does not currently offer an application programming interface (API) resource; therefore, there is no Terraform module or Lacework command-line interface (CLI) command to conduct auth configurations programmatically. 
 
 
-# Okta identity provider
+## Okta identity provider
 
 The provider is responsible for most of this effort. This section describes the Okta requirements to achieve JIT auth.
 
 
-## Recommendations
+### Recommendations
 
 
 
 * Use the [Okta Terraform provider](https://registry.terraform.io/providers/okta/okta/latest/docs).
 * Use the identity provider metadata XML file to minimize human error. See example-okta-idp-metadata.xml.
 
-
-## Configure Okta (via Terraform)
+### Steps
+#### Configure Okta (via Terraform)
 1. Gather the Lacework organization name. This is typically the company name, e.g., MongoDB.
 2. Add a Security Assertion Markup Language (SAML) application by creating a `okta_app_saml` resource. The name and label of the resource are flexible. In the example below, we use `dianademo-tfapp` and the Lacework organization name is `lwintdiana`.
 
@@ -219,7 +219,7 @@ resource "okta_app_user" "dummy_lw_user" {
     * In the terminal, run `terraform apply`.
     * Confirm with `yes`. 
 
-## Configure Lacework (via the user interface)
+#### Configure Lacework (via the user interface)
 As per the current limitations, only one auth mode can be enabled. Ensure you’ve disabled all auth configurations before continuing.  
 
 1. Configure Lacework (via the user interface)
