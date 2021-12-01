@@ -254,7 +254,11 @@ As per the current limitations, only one auth mode can be enabled. Ensure you’
 
         If you created a dummy user, you can now attempt to login to the Lacework platform with their credentials. It may take a few seconds for the profile to create, but once that completes, our dummy user has access to the platform. Example screenshot:
 
+![JIT screenshot 1](https://github.com/lacework-community/jit-provisioning-guide/blob/main/JIT-screenshot-1.png)
 
+Example profile:
+
+![JIT screenshot 2](https://github.com/lacework-community/jit-provisioning-guide/blob/main/JIT-screenshot-2.png)
   
  
 
