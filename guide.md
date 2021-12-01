@@ -11,7 +11,7 @@ SAML JIT user provisioning is achieved via attribute definitions in the SAML ide
 
 
 
-* Follow the [Principle of Least Privilege](https://en.wikipedia.org/wiki/Principle_of_least_privilege) (PoLP). Review the [Lacework role-based access control (RBAC](#lacework-rbac)) in the [appendix](https://github.com/lacework-community/jit-provisioning-guide/blob/main/appendix.md). 
+* Follow the [Principle of Least Privilege](https://en.wikipedia.org/wiki/Principle_of_least_privilege) (PoLP). Review the [Lacework role-based access control (RBAC](#lacework-rbac)) in the appendix.
 
 
 ## Limitations
