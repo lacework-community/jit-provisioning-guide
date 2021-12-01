@@ -33,7 +33,7 @@ The provider is responsible for most of this effort. This section describes the 
 
 
 * Use the [Okta Terraform provider](https://registry.terraform.io/providers/okta/okta/latest/docs).
-* Use the identity provider metadata XML file to minimize human error. See example-okta-idp-metadata.xml.
+* Use the identity provider metadata XML file to minimize human error. See [example-okta-idp-metadata.xml](https://github.com/lacework-community/jit-provisioning-guide/blob/main/guide.md#okta-example-okta-idp-metadataxml).
 
 ### Steps
 #### Configure Okta (via Terraform)
