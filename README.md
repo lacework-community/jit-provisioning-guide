@@ -51,7 +51,7 @@ SAML JIT user provisioning is achieved via attribute definitions in the SAML ide
 
 ## Installation Steps
 
-TO VIEW THE INSTALLATION STEPS, NAVIGATE TO YOUR CORRESPOINDING CONFIGURATION FROM BELOW
+TO VIEW THE INSTALLATION STEPS, NAVIGATE TO YOUR CORRESPONDING CONFIGURATION BELOW.
 
 ### **[Okta Identity Provider](examples/okta/README.md)**
 
