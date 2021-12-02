@@ -1,0 +1,94 @@
+// curl -v -X GET 
+// -H "Accept: application/json" \
+// -H "Content-Type: application/json" \
+// -H "Authorization: SSWS abc123abc123abc123abc123abc123" \
+// "https://laceworkdemo.okta.com/api/v1/meta/schemas/apps/abc123abc123abc123abc123/default"
+{
+  "id": "https://laceworkdemo.okta.com/meta/schemas/apps/abc123abc123abc123abc123/default",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "name": "laceworkdemo_dianademoapp_1",
+  "title": "dianademo-app User",
+  "lastUpdated": "2021-10-16T21:29:56.000Z",
+  "created": "2021-10-16T21:16:31.000Z",
+  "definitions": {
+    "custom": {
+      "id": "#custom",
+      "type": "object",
+      "properties": {
+        "compnay": {
+          "title": "Company",
+          "type": "string",
+          "scope": "NONE",
+          "master": {
+            "type": "PROFILE_MASTER"
+          }
+        },
+        "laceworkAdminRoleAccounts": {
+          "title": "Lacework Admin Role Accounts",
+          "type": "string",
+          "scope": "NONE",
+          "master": {
+            "type": "PROFILE_MASTER"
+          }
+        },
+        "laceworkUserRoleAccounts": {
+          "title": "Lacework User Role Accounts",
+          "type": "string",
+          "scope": "NONE",
+          "master": {
+            "type": "PROFILE_MASTER"
+          }
+        },
+        "laceworkOrgAdminRole": {
+          "title": "Lacework Organization Admin Role",
+          "type": "boolean",
+          "scope": "NONE",
+          "master": {
+            "type": "PROFILE_MASTER"
+          }
+        },
+        "laceworkOrgUserRole": {
+          "title": "Lacework Organization User Role",
+          "type": "boolean",
+          "scope": "NONE",
+          "master": {
+            "type": "PROFILE_MASTER"
+          }
+        }
+      },
+      "required": []
+    },
+    "base": {
+      "id": "#base",
+      "type": "object",
+      "properties": {
+        "userName": {
+          "title": "Username",
+          "type": "string",
+          "required": true,
+          "scope": "NONE",
+          "maxLength": 100,
+          "master": {
+            "type": "PROFILE_MASTER"
+          }
+        }
+      },
+      "required": [
+        "userName"
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "profile": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/custom"
+        },
+        {
+          "$ref": "#/definitions/base"
+        }
+      ]
+    }
+  }
+}

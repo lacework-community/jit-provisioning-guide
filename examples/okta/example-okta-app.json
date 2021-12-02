@@ -1,0 +1,169 @@
+{
+  "id": "abc123abc123abc123abc123abc123abc123",
+  "name": "laceworkdemo_dianademoapp_1",
+  "label": "dianademo-app",
+  "status": "ACTIVE",
+  "lastUpdated": "2021-10-16T22:24:37.000Z",
+  "created": "2021-10-16T21:16:31.000Z",
+  "accessibility": {
+    "selfService": false,
+    "errorRedirectUrl": null,
+    "loginRedirectUrl": null
+  },
+  "visibility": {
+    "autoSubmitToolbar": false,
+    "hide": {
+      "iOS": false,
+      "web": false
+    },
+    "appLinks": {
+      "laceworkdemo_dianademoapp_1_link": true
+    }
+  },
+  "features": [],
+  "signOnMode": "SAML_2_0",
+  "credentials": {
+    "userNameTemplate": {
+      "template": "${source.email}",
+      "type": "BUILT_IN"
+    },
+    "signing": {
+      "kid": "abc123abc123abc123abc123abc123"
+    }
+  },
+  "settings": {
+    "app": {},
+    "notifications": {
+      "vpn": {
+        "network": {
+          "connection": "DISABLED"
+        },
+        "message": null,
+        "helpUrl": null
+      }
+    },
+    "signOn": {
+      "defaultRelayState": "",
+      "ssoAcsUrl": "https://lwintdiana.lacework.net/sso/saml/login",
+      "idpIssuer": "http://www.okta.com/${org.externalKey}",
+      "audience": "https://lacework.net",
+      "recipient": "https://lwintdiana.lacework.net/sso/saml/login",
+      "destination": "https://lwintdiana.lacework.net/sso/saml/login",
+      "subjectNameIdTemplate": "${user.userName}",
+      "subjectNameIdFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+      "responseSigned": true,
+      "assertionSigned": true,
+      "signatureAlgorithm": "RSA_SHA256",
+      "digestAlgorithm": "SHA256",
+      "honorForceAuthn": true,
+      "authnContextClassRef": "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport",
+      "spIssuer": null,
+      "requestCompressed": false,
+      "attributeStatements": [
+        {
+          "type": "EXPRESSION",
+          "name": "First Name",
+          "namespace": "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+          "values": [
+            "user.firstName"
+          ]
+        },
+        {
+          "type": "EXPRESSION",
+          "name": "Last Name",
+          "namespace": "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+          "values": [
+            "Last Name, user.lastName"
+          ]
+        },
+        {
+          "type": "EXPRESSION",
+          "name": "Company Name",
+          "namespace": "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+          "values": [
+            "user.company"
+          ]
+        },
+        {
+          "type": "EXPRESSION",
+          "name": "Lacework Admin Role Accounts",
+          "namespace": "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+          "values": [
+            "user.laceworkAdminRoleAccounts"
+          ]
+        },
+        {
+          "type": "EXPRESSION",
+          "name": "Lacework User Role Accounts",
+          "namespace": "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+          "values": [
+            "user.laceworkUserRoleAccounts"
+          ]
+        },
+        {
+          "type": "EXPRESSION",
+          "name": "Lacework Organization Admin Role",
+          "namespace": "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+          "values": [
+            "user.laceworkOrgAdminRole"
+          ]
+        },
+        {
+          "type": "EXPRESSION",
+          "name": "Lacework Organization User Role",
+          "namespace": "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+          "values": [
+            "user.laceworkOrgUserRole"
+          ]
+        }
+      ],
+      "inlineHooks": [],
+      "allowMultipleAcsEndpoints": false,
+      "acsEndpoints": [],
+      "slo": {
+        "enabled": false
+      }
+    }
+  },
+  "_links": {
+    "help": {
+      "href": "https://laceworkdemo-admin.okta.com/app/laceworkdemo_dianademoapp_1/abc123abc123abc123abc123/setup/help/SAML_2_0/instructions",
+      "type": "text/html"
+    },
+    "metadata": {
+      "href": "https://laceworkdemo.okta.com/api/v1/apps/abc123abc123abc123abc123/sso/saml/metadata",
+      "type": "application/xml"
+    },
+    "uploadLogo": {
+      "href": "https://laceworkdemo.okta.com/api/v1/apps/abc123abc123abc123abc123/logo",
+      "hints": {
+        "allow": [
+          "POST"
+        ]
+      }
+    },
+    "appLinks": [
+      {
+        "name": "laceworkdemo_dianademoapp_1_link",
+        "href": "https://laceworkdemo.okta.com/home/laceworkdemo_dianademoapp_1/abc123abc123abc123abc123/aln4c81rjr7uJFuds696",
+        "type": "text/html"
+      }
+    ],
+    "groups": {
+      "href": "https://laceworkdemo.okta.com/api/v1/apps/abc123abc123abc123abc123/groups"
+    },
+    "logo": [
+      {
+        "name": "medium",
+        "href": "https://ok14static.oktacdn.com/fs/bco/4/abc123abc123",
+        "type": "image/png"
+      }
+    ],
+    "users": {
+      "href": "https://laceworkdemo.okta.com/api/v1/apps/abc123abc123abc123abc123/users"
+    },
+    "deactivate": {
+      "href": "https://laceworkdemo.okta.com/api/v1/apps/abc123abc123abc123abc123/lifecycle/deactivate"
+    }
+  }
+}
