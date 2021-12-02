@@ -230,7 +230,7 @@ The provider is responsible for most of the effort in this guide. This section d
     * In the terminal, run `terraform apply`.
     * Confirm with `yes`. 
 
-### Step 3: Configure Lacework (via the user interface) <!-- omit in toc -->
+### Step 2: Configure Lacework (via the user interface) <!-- omit in toc -->
 As per the current limitations, only one auth mode can be enabled. Ensure you’ve disabled all auth configurations before continuing.  
 
 1. Open https://YOUR-ORG.lacework.net/ui/investigation/settings 
