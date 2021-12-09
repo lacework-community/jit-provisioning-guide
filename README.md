@@ -40,7 +40,7 @@ SAML JIT user provisioning is achieved via attribute definitions in the SAML ide
 
 ## General Best Practices
 
-* Follow the [Principle of Least Privilege](https://us-cert.cisa.gov/bsi/articles/knowledge/principles/least-privilege#:~:text=The%20Principle%20of%20Least%20Privilege%20states%20that%20a%20subject%20should,control%20the%20assignment%20of%20rights) (PoLP). Review the [Lacework role-based access control (RBAC)](https://github.com/lacework-community/jit-provisioning-guide/blob/main/guide.md#lacework-rbac) in the appendix.
+* Follow the [Principle of Least Privilege](https://us-cert.cisa.gov/bsi/articles/knowledge/principles/least-privilege#:~:text=The%20Principle%20of%20Least%20Privilege%20states%20that%20a%20subject%20should,control%20the%20assignment%20of%20rights) (PoLP). Review the [Lacework role-based access control (RBAC)](Lacework RBAC).
 
 
 ## General Requirements
