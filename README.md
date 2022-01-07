@@ -8,6 +8,7 @@
   - [Best practices](#best-practices)
   - [Prerequisites](#prerequisites)
   - [Installation steps](#installation-steps)
+    - [Okta identity provider](#okta-identity-provider)
   - [Appendix](#appendix)
     - [Additional resources](#additional-resources) 
     - [Lacework RBAC](#lacework-rbac)
@@ -43,7 +44,7 @@ SAML JIT user provisioning is achieved via attribute definitions in the SAML ide
 
 To view the installation steps, navigate to the corresponding configuration below. 
 
-* [Okta Identity Provider](examples/okta/README.md)
+### [Okta identity provider](examples/okta/README.md)
 
 
 ---
