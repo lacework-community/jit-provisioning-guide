@@ -1,7 +1,7 @@
 # Lacework Auth: Just-In-Time Provisioning Guide
 
 <!-- Add a Table of Contents, in VS Code add the plugin -->
-## Contents
+## Table of Contents
 
 - [Lacework Auth: Just-In-Time Provisioning Guide](#lacework-auth-just-in-time-provisioning-guide)
   - [Contents](#contents)
