@@ -264,7 +264,6 @@ As per the current limitations, only one auth mode can be enabled. Ensure you’
 ## Appendix
 ### Additional resources
 
-* [Lacework Docs on Okta SAML IDP](https://docs.lacework.com/okta-as-a-saml-idp)
-* [Lacework Docs SAML configuration](https://docs.lacework.com/saml-configuration)
+* [Okta SAML IDP](https://docs.lacework.com/okta-as-a-saml-idp)
 * [SAML JIT Overview](https://docs.lacework.com/saml-jit-overview) 
 * [SAML Configuration](https://docs.lacework.com/saml-configuration) 
