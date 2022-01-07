@@ -8,7 +8,7 @@
   - [Best practices](#best-practices)
   - [Prerequisites](#prerequisites)
   - [Installation steps](#installation-steps)
-  - [Additional Resources](#additional-resources)
+  - [Additional resources](#additional-resources)
   - [Lacework RBAC](#lacework-rbac)
     - [Terms](#terms)
     - [Chart](#chart)
@@ -50,7 +50,7 @@ To view the installation steps, navigate to the corresponding configuration belo
 ---
 
 ## Appendix
-### Additional Resources
+### Additional resources
 
 * [Lacework Docs SAML configuration](https://docs.lacework.com/saml-configuration)
 * [SAML JIT Overview](https://docs.lacework.com/saml-jit-overview) 
