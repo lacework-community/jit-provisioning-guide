@@ -52,9 +52,8 @@ To view the installation steps, navigate to the corresponding configuration belo
 ## Appendix
 ### Additional resources
 
-* [Lacework Docs SAML configuration](https://docs.lacework.com/saml-configuration)
+* [SAML Configuration](https://docs.lacework.com/saml-configuration)
 * [SAML JIT Overview](https://docs.lacework.com/saml-jit-overview) 
-* [SAML Configuration](https://docs.lacework.com/saml-configuration) 
 
 <!-- Hoping this will be a PR and available in our docs pronto! -->
 ### Lacework RBAC 
