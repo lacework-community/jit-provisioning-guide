@@ -1,24 +1,22 @@
 # Lacework Auth: Just-In-Time Provisioning Guide
 
 <!-- Add a Table of Contents, in VS Code add the plugin -->
-## Table of Contents
+## Table of contents
 
-- [Lacework Auth: Just-In-Time Provisioning Guide](#lacework-auth-just-in-time-provisioning-guide)
-  - [Contents](#contents)
-  - [Change Log :notebook:](#change-log-notebook)
+  - [Change log](#change-log)
   - [Overview](#overview)
-  - [General Best Practices](#general-best-practices)
-  - [General Requirements](#general-requirements)
-  - [Installation Steps](#installation-steps)
+  - [Best practices](#best-practices)
+  - [Prerequisites](#prerequisites)
+  - [Installation steps](#installation-steps)
     - [**Okta Identity Provider**](#okta-identity-provider)
   - [Additional Resources](#additional-resources)
   - [Lacework RBAC](#lacework-rbac)
     - [Terms](#terms)
     - [Chart](#chart)
-  - [Got Feedback?](#got-feedback)
+  - [Provide feedback](#provide-feedback)
 
 <!-- Add a Changelog to help customers understand new changes etc -->
-## Change log :notebook: 
+## Change log
 
 | **Date**  | **Author** | **Comment** | 
 | ------------- | ------------- | ------------- |
