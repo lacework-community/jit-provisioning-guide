@@ -8,10 +8,9 @@
   - [Best practices](#best-practices)
   - [Prerequisites](#prerequisites)
   - [Installation steps](#installation-steps)
-  - [Additional resources](#additional-resources)
-  - [Lacework RBAC](#lacework-rbac)
-    - [Terms](#terms)
-    - [Chart](#chart)
+  - [Appendix](#appendix)
+    - [Additional resources](#additional-resources) 
+    - [Lacework RBAC](#lacework-rbac)
   - [Provide feedback](#provide-feedback)
 
 <!-- Add a Changelog to help customers understand new changes etc -->
