@@ -1,0 +1,7 @@
+# Please fill in the values for all the variables here
+okta_api_token = "ABCDE_123ABC123ABC123ABC123ABC123ABC123ABC"
+okta_base_url = "okta.com"
+okta_org_name = "dev-1234567.okta.com"
+
+
+lw_org_name = "lwintdiana"

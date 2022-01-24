@@ -1,0 +1,4 @@
+examples/RECYCLE_BIN/*
+examples/.terraform.lock*
+examples/terraform.tfvars
+examples/.terraform*

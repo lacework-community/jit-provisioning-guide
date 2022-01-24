@@ -38,7 +38,7 @@ SAML JIT user provisioning is achieved via attribute definitions in the SAML ide
 
 * One auth method is allowed. Any existing auth will have to be either disabled or converted to JIT.
 * If the account being configured belongs to an organization, the authentication must be set at the organization level. 
-* The Lacework platform does not currently offer an application programming interface (API) resource; therefore, there is no Terraform module or Lacework command-line interface (CLI) command to conduct auth configurations programmatically. 
+* The Lacework platform does not currently offer an application programming interface (API) resource; therefore, there is no Terraform module or Lacework command-line interface (CLI) command to conduct auth configurations programmatically. Thus, we need to access Lacework Console via the browser to configure the auth piece at this moment.
 
 ## Installation steps
 
@@ -356,3 +356,4 @@ To view the installation steps, navigate to the corresponding configuration belo
 ## Provide feedback
 
 - Submit a pull request with your suggestions. 
+- Email `community@lacework.com`

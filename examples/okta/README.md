@@ -15,12 +15,17 @@ This guide describes the Okta requirements to achieve JIT auth with Lacework.
 
 ## Steps
 
-### 1. Review [best practices](../../README.md#best-practices) and [prerequisites](../../README.md#prerequisites). <!-- omit in toc -->
+### **1**. Review [best practices](../../README.md#best-practices) and [prerequisites](../../README.md#prerequisites). <!-- omit in toc -->
+  - You may sign up for a free Okta Trial [here](https://www.okta.com/free-trial/customer-identity/). After activating the trial, head to https://`<YOUR_ORG>`-admin.okta.com/admin/access/api/tokens to create a token. Securely store the token value. 
 
-### 2. Configure Okta (via Terraform). <!-- omit in toc -->
+### **2**. Configure Okta (via Terraform). <!-- omit in toc -->
 
-* 2a. Gather the Lacework organization name. This is typically the company name, e.g., MongoDB.
-* 2b. Add a Security Assertion Markup Language (SAML) application by creating a `okta_app_saml` resource. The name and label of the resource are flexible. In the example below, we use `dianademo-tfapp` and the Lacework organization name is `lwintdiana`.
+Note: If you do not have Terraform installed, follow your OS-specific installation instructions in [this](https://learn.hashicorp.com/tutorials/terraform/install-cli#install-terraform) page.
+
+Note: The full example can be found [here](example-lw+okta.tf).
+
+* **2a**. Gather the Lacework organization name. This is typically the company name, e.g., MongoDB. In this example, the Lacework organization name is `lwintdiana`.
+* **2b**. Add a Security Assertion Markup Language (SAML) application by creating a `okta_app_saml` resource. The name and label of the resource are flexible. In the example below, we use `dianademo-tfapp`. 
     ```terraform
     provider "okta" { 
       api_token = "000000000000nabkfg37j2oj2c9eklR1xx-w7naX3A"
@@ -92,13 +97,13 @@ This guide describes the Okta requirements to achieve JIT auth with Lacework.
       }
     }
     ```
-* 2c. In the terminal, run `terraform apply`. Example output:
+* **2c**. In the terminal, run `terraform apply`. Example output:
     ```bash
     okta_app_saml.dianademo-tfapp: Creating...
     okta_app_saml.dianademo-tfapp: Creation complete after 2s [id=0oa4cr8udw13tOrQE696]
     ```
-* 2d. Save the application ID (`0oa4cr8udw13tOrQE696`).
-* 2e. Obtain the metadata by calling the `okta_app_metadata_saml` data source and outputting it:
+* **2d**. Save the application ID (`0oa4cr8udw13tOrQE696`).
+* **2e**. Obtain the metadata by calling the `okta_app_metadata_saml` data source and outputting it:
     ```terraform
     data "okta_app_metadata_saml" "dianademo" {
       app_id = "0oa4cr8udw13tOrQE696"
@@ -108,12 +113,12 @@ This guide describes the Okta requirements to achieve JIT auth with Lacework.
       value = data.okta_app_metadata_saml.dianademo.metadata
     }
     ```
-* 2f. Download the metadata locally. Once the Lacework Terraform provider supports auth, we will pass the data directly. However, we currently need to locally store this file. This example uses [jq](https://stedolan.github.io/jq/) to obtain the XML file:
+* **2f**. Download the metadata locally. Once the Lacework Terraform provider supports auth, we will pass the data directly. However, we currently need to locally store this file. This example uses [jq](https://stedolan.github.io/jq/) to obtain the XML file:
     ```bash
     terraform refresh
     terraform output -json | jq  .dianademo.value -r > example-metadata.xml
     ```
-* 2g. Add custom Lacework attributes to a profile. If you have a specific profile attached to each application, add the attributes to the application user profile as shown  below. 
+* **2g**. Add custom Lacework attributes to a profile. If you have a specific profile attached to each application, add the attributes to the application user profile as shown  below. 
     ```terraform
     # App user schema custom attributes
     resource "okta_app_user_schema_property" "company" {
@@ -197,11 +202,11 @@ This guide describes the Okta requirements to achieve JIT auth with Lacework.
     }
     ```
 
-* 2h. [Optional] Prepare to test the configuration. We’ll add a dummy person to Okta and grant them access to the Lacework application. Make sure to use a valid email because we’ll need to activate this user. The test occurs at the end of step 3 as it requires the Lacework platform to be configured.
+* **2h**. [Optional] Prepare to test the configuration. We’ll add a test person to Okta and grant them access to the Lacework application. Make sure to use a valid email because we’ll need to activate this user. The test occurs at the end of step 3 as it requires the Lacework platform to be configured.
    - Add a user using the `okta_user` resource. 
        
      ```terraform
-     resource "okta_user" "dummy_user" {
+     resource "okta_user" "test_user" {
        first_name         = "Ash"
        last_name          = "Ketchum"
        login              = "diana@lacework.net"
@@ -213,29 +218,32 @@ This guide describes the Okta requirements to achieve JIT auth with Lacework.
    - Grant the user access to the Lacework app.
       ```terraform
       # Save profile to send to the LW App
-      data "okta_user" "dummy_user" {
+      data "okta_user" "test_user" {
         user_id = "00u4dn1ovygOcDmn1696"
       }
 
-      resource "okta_app_user" "dummy_lw_user" {
+      resource "okta_app_user" "test_lw_user" {
         app_id   = "0oa4cr8udw13tOrQE696"
         user_id  = "00u4dn1ovygOcDmn1696"
         username = "diana@lacework.net"
-        # TODO - Add from the dummy_user data
+        # TODO - Add from the test_user data
         profile =  "{\"company\":\"Cerise Laboratory\",\"laceworkOrgAdminRole\":true,\"firstName\":\"Ash\",\"lastName\":\"Ketchum\"}"
       }
       ```
-   - Activate the Okta Account. To do this, open the dummy user’s inbox and select the **Welcome to Okta!** email. Click the **activation** button. This will redirect you to create a password.
-* 2i. Apply all the changes:
+   - Activate the Okta Account. To do this, open the test user’s inbox and select the **Welcome to Okta!** email. Click the **activation** button. This will redirect you to create a password.
+* **2i**. Apply all the changes:
     * In the terminal, run `terraform apply`.
     * Confirm with `yes`. 
 
-### 3. Configure Lacework (via the user interface). <!-- omit in toc -->
+
+- The full example can be found [here](example-lw+okta.tf)
+
+### **3**. Configure Lacework (via the user interface). <!-- omit in toc -->
 As per the current limitations, only one auth mode can be enabled. Ensure you’ve disabled all auth configurations before continuing.  
 
-* 3a. Open https://YOUR-ORG.lacework.net/ui/investigation/settings. 
-* 3b. Navigate to the “Authentication” page.
-* 3c. If you have an existing Okta SAML auth configured and want to change it to allow for JIT, follow these instructions:
+* **3a**. Open https://YOUR-ORG.lacework.net/ui/investigation/settings. 
+* **3b**. Navigate to the “Authentication” page.
+* **3c**. If you have an existing Okta SAML auth configured and want to change it to allow for JIT, follow these instructions:
 
     * To update: 
         * Check existing SAML.
@@ -255,8 +263,8 @@ As per the current limitations, only one auth mode can be enabled. Ensure you’
       * Enable **Just-In-Time User Provisioning**.
       * Click **Save.**
     
-* 3d. [Optional] Test Okta SAML JIT.
-    * If you created a dummy user, you can now attempt to log in to the Lacework platform with their credentials. It may take a few seconds for the profile to create, but once that completes, the dummy user has access to the platform. 
+* **3d**. [Optional] Test Okta SAML JIT.
+    * If you created a test user, you can now attempt to log in to the Lacework platform with their credentials. It may take a few seconds for the profile to create, but once that completes, the test user has access to the platform. 
 
 ![Example screenshot](screenshots/JIT-screenshot-1.png)
 ![Example profile](screenshots/JIT-screenshot-2.png)
