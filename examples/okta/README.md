@@ -22,35 +22,48 @@ This guide describes the Okta requirements to achieve JIT auth with Lacework.
 
 Note: If you do not have Terraform installed, follow your OS-specific installation instructions in [this](https://learn.hashicorp.com/tutorials/terraform/install-cli#install-terraform) page.
 
-Note: The full example can be found [here](example-lw+okta.tf).
+Note: The full example can be found [here](example-lw+okta.tf). 
 
-* **2a**. Gather the Lacework organization name. This is typically the company name, e.g., MongoDB. In this example, the Lacework organization name is `lwintdiana`.
-* **2b**. Add a Security Assertion Markup Language (SAML) application by creating a `okta_app_saml` resource. The name and label of the resource are flexible. In the example below, we use `dianademo-tfapp`. 
+* **2A**. Gather the Lacework organization name. This is typically the company name, e.g., MongoDB. In this example, the Lacework organization name is `lwintdiana` and this has been set in the `terraform.tfvars` file. Refer to [terraform.tfvars.example](terraform.tfvars.example) for required variables.
+
+  ```terraform
+    # Please fill in the values for all the variables here
+    okta_api_token = "ABCDE_123ABC123ABC123ABC123ABC123ABC123ABC"
+    okta_base_url = "okta.com"
+    okta_org_name = "dev-1234567"
+
+
+    lw_org_name = "lwintdiana"
+  ```
+
+* **2B**. Add a Security Assertion Markup Language (SAML) application by creating a `okta_app_saml` resource. The name and label of the resource are flexible. In the example below, we use `lacework-okta-demo`. 
     ```terraform
-    provider "okta" { 
-      api_token = "000000000000nabkfg37j2oj2c9eklR1xx-w7naX3A"
-      base_url = "okta.com"
-      org_name = "laceworkdemo"
-      log_level = 2
-    }
+      provider "okta" { 
+        api_token = var.okta_api_token
+        base_url = var.okta_base_url
+        org_name = var.okta_org_name
+      }
 
-    resource "okta_app_saml" "dianademo-tfapp" {
-      label                    = "dianademo-tfapp"
-      status                   = "ACTIVE"
-      sso_url                  = "https://lwintdiana.lacework.net/sso/saml/login"
-      recipient                = "https://lwintdiana.lacework.net/sso/saml/login"
-      destination              = "https://lwintdiana.lacework.net/sso/saml/login"
-      audience                 = "https://lacework.net"
-      subject_name_id_template = "$${user.userName}"
-      subject_name_id_format   = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
-      response_signed          = true
-      signature_algorithm      = "RSA_SHA256"
-      digest_algorithm         = "SHA256"
-      honor_force_authn        = false
-      authn_context_class_ref  = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+      resource "okta_app_saml" "lacework-okta-demo" {
+        lifecycle {
+        ignore_changes = [users]
+      }
+        label                    = "lacework-okta-demo"
+        status                   = "ACTIVE"
+        sso_url                  = format("https://%s.lacework.net/sso/saml/login", var.lw_org_name)
+        recipient                = format("https://%s.lacework.net/sso/saml/login", var.lw_org_name)
+        destination              = format("https://%s.lacework.net/sso/saml/login", var.lw_org_name)
+        audience                 = "https://lacework.net"
+        subject_name_id_template = "$${user.userName}"
+        subject_name_id_format   = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
+        response_signed          = true
+        signature_algorithm      = "RSA_SHA256"
+        digest_algorithm         = "SHA256"
+        honor_force_authn        = false
+        authn_context_class_ref  = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
 
-      user_name_template = "$${source.email}"
-      user_name_template_type = "BUILT_IN"
+        user_name_template = "$${source.email}"
+        user_name_template_type = "BUILT_IN"
 
       attribute_statements {
         
@@ -97,32 +110,12 @@ Note: The full example can be found [here](example-lw+okta.tf).
       }
     }
     ```
-* **2c**. In the terminal, run `terraform apply`. Example output:
-    ```bash
-    okta_app_saml.dianademo-tfapp: Creating...
-    okta_app_saml.dianademo-tfapp: Creation complete after 2s [id=0oa4cr8udw13tOrQE696]
-    ```
-* **2d**. Save the application ID (`0oa4cr8udw13tOrQE696`).
-* **2e**. Obtain the metadata by calling the `okta_app_metadata_saml` data source and outputting it:
-    ```terraform
-    data "okta_app_metadata_saml" "dianademo" {
-      app_id = "0oa4cr8udw13tOrQE696"
-    }
 
-    output "dianademo" {
-      value = data.okta_app_metadata_saml.dianademo.metadata
-    }
-    ```
-* **2f**. Download the metadata locally. Once the Lacework Terraform provider supports auth, we will pass the data directly. However, we currently need to locally store this file. This example uses [jq](https://stedolan.github.io/jq/) to obtain the XML file:
-    ```bash
-    terraform refresh
-    terraform output -json | jq  .dianademo.value -r > example-metadata.xml
-    ```
-* **2g**. Add custom Lacework attributes to a profile. If you have a specific profile attached to each application, add the attributes to the application user profile as shown  below. 
+* **2C**. Add custom Lacework attributes to a profile. If you have a specific profile attached to each application, add the attributes to the application user profile as shown  below. 
     ```terraform
     # App user schema custom attributes
     resource "okta_app_user_schema_property" "company" {
-      app_id      = "0oa4cr8udw13tOrQE696"
+      app_id      = okta_app_saml.lacework-okta-demo.id
       index       = "company"
       title       = "Company"
       type        = "string"
@@ -130,7 +123,7 @@ Note: The full example can be found [here](example-lw+okta.tf).
       scope       = "NONE"
     }
     resource "okta_app_user_schema_property" "laceworkAdminRoleAccounts" {
-      app_id      = "0oa4cr8udw13tOrQE696"
+      app_id      = okta_app_saml.lacework-okta-demo.id
       index       = "laceworkAdminRoleAccounts"
       title       = "Lacework Admin Role Accounts"
       type        = "string"
@@ -138,7 +131,7 @@ Note: The full example can be found [here](example-lw+okta.tf).
       scope       = "NONE"
     }
     resource "okta_app_user_schema_property" "laceworkUserRoleAccounts" {
-      app_id      = "0oa4cr8udw13tOrQE696"
+      app_id      = okta_app_saml.lacework-okta-demo.id
       index       = "laceworkUserRoleAccounts"
       title       = "Lacework User Role Accounts"
       type        = "string"
@@ -146,7 +139,7 @@ Note: The full example can be found [here](example-lw+okta.tf).
       scope       = "NONE"
     }
     resource "okta_app_user_schema_property" "laceworkOrgAdminRole" {
-      app_id      = "0oa4cr8udw13tOrQE696"
+      app_id      = okta_app_saml.lacework-okta-demo.id
       index       = "laceworkOrgAdminRole"
       title       = "Lacework Organization Admin Role"
       type        = "boolean"
@@ -154,7 +147,7 @@ Note: The full example can be found [here](example-lw+okta.tf).
       scope       = "NONE"
     }
     resource "okta_app_user_schema_property" "laceworkOrgUserRole" {
-      app_id      = "0oa4cr8udw13tOrQE696"
+      app_id      = okta_app_saml.lacework-okta-demo.id
       index       = "laceworkOrgUserRole"
       title       = "Lacework Organization User Role"
       type        = "boolean"
@@ -202,7 +195,7 @@ Note: The full example can be found [here](example-lw+okta.tf).
     }
     ```
 
-* **2h**. [Optional] Prepare to test the configuration. We’ll add a test person to Okta and grant them access to the Lacework application. Make sure to use a valid email because we’ll need to activate this user. The test occurs at the end of step 3 as it requires the Lacework platform to be configured.
+* **2D**. [Optional] Prepare to test the configuration. We’ll add a test user to Okta and grant them access to the Lacework application. Make sure to use a valid email because we’ll need to activate this user. The test occurs at the end of step 3 as it requires the Lacework platform to be configured.
    - Add a user using the `okta_user` resource. 
        
      ```terraform
@@ -214,36 +207,47 @@ Note: The full example can be found [here](example-lw+okta.tf).
        custom_profile_attributes = "{ \"company\" : \"Cerise Laboratory\", \"laceworkOrgAdminRole\" : true }"
      }
      ```
-   - Apply the changes to obtain the id. This is used in the next step as the user_id.
-   - Grant the user access to the Lacework app.
+   - Grant the test user access to the Lacework app.
       ```terraform
-      # Save profile to send to the LW App
-      data "okta_user" "test_user" {
-        user_id = "00u4dn1ovygOcDmn1696"
-      }
-
-      resource "okta_app_user" "test_lw_user" {
-        app_id   = "0oa4cr8udw13tOrQE696"
-        user_id  = "00u4dn1ovygOcDmn1696"
-        username = "diana@lacework.net"
-        # TODO - Add from the test_user data
-        profile =  "{\"company\":\"Cerise Laboratory\",\"laceworkOrgAdminRole\":true,\"firstName\":\"Ash\",\"lastName\":\"Ketchum\"}"
+        resource "okta_app_user" "test_lw_user" {
+        app_id   = okta_app_saml.lacework-okta-demo.id
+        user_id  = okta_user.test_user.id
+        profile  = okta_user.test_user.custom_profile_attributes
       }
       ```
-   - Activate the Okta Account. To do this, open the test user’s inbox and select the **Welcome to Okta!** email. Click the **activation** button. This will redirect you to create a password.
-* **2i**. Apply all the changes:
+    
+* **2E**. Apply all the changes:
     * In the terminal, run `terraform apply`.
     * Confirm with `yes`. 
 
+* **2F**. Obtain the Okta app's metadata XML
 
-- The full example can be found [here](example-lw+okta.tf)
+  -  Call the `okta_app_metadata_saml` data source as
+    ```terraform
+    data "okta_app_metadata_saml" "dianademo" {
+      app_id = okta_app_saml.lacework-okta-demo.id
+    }
+
+    output "dianademo" {
+      value = data.okta_app_metadata_saml.dianademo.metadata
+    }
+    ```
+* **2G**. Download the metadata locally. 
+
+  Note: Refer to [example-metadata.xml](example-metadata.xml) to see what the XML file looks like.
+
+  Note: This example uses [jq](https://stedolan.github.io/jq/) to obtain the XML file:
+    ```bash
+    terraform refresh
+    terraform output -json | jq  .dianademo.value -r > example-metadata.xml
+    ```
 
 ### **3**. Configure Lacework (via the user interface). <!-- omit in toc -->
 As per the current limitations, only one auth mode can be enabled. Ensure you’ve disabled all auth configurations before continuing.  
 
-* **3a**. Open https://YOUR-ORG.lacework.net/ui/investigation/settings. 
-* **3b**. Navigate to the “Authentication” page.
-* **3c**. If you have an existing Okta SAML auth configured and want to change it to allow for JIT, follow these instructions:
+* **3A**. Open https://YOUR-ORG.lacework.net/ui/investigation/settings. 
+* **3B**. Navigate to the “Authentication” page.
+* **3C**. If you have an existing Okta SAML auth configured and want to change it to allow for JIT, follow these instructions:
 
     * To update: 
         * Check existing SAML.
@@ -263,8 +267,11 @@ As per the current limitations, only one auth mode can be enabled. Ensure you’
       * Enable **Just-In-Time User Provisioning**.
       * Click **Save.**
     
-* **3d**. [Optional] Test Okta SAML JIT.
-    * If you created a test user, you can now attempt to log in to the Lacework platform with their credentials. It may take a few seconds for the profile to create, but once that completes, the test user has access to the platform. 
+* **3D**. [Optional] Test Okta SAML JIT.
+   - Activate the test user's Okta account. 
+      -  Open the test user’s inbox and select the **Welcome to Okta!** email. Click the **activation** button. This will redirect you to create a password.
+    - Log in to the Lacework platform with the test user's credentials. It may take a few seconds for the profile to create, but once that completes, the test user has access to the platform. 
+    - Refer to the screenshots below to compare what the test user should see.
 
 ![Example screenshot](screenshots/JIT-screenshot-1.png)
 ![Example profile](screenshots/JIT-screenshot-2.png)
