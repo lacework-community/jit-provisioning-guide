@@ -196,23 +196,23 @@ Note: The full example can be found [here](example-lw+okta.tf).
     ```
 
 * **2D**. [Optional] Prepare to test the configuration. We’ll add a test user to Okta and grant them access to the Lacework application. Make sure to use a valid email because we’ll need to activate this user. The test occurs at the end of step 3 as it requires the Lacework platform to be configured.
-   - Add a user using the `okta_user` resource. 
+   - Add a test user and grant them access to the Lacework application.
        
      ```terraform
-     resource "okta_user" "test_user" {
-       first_name         = "Ash"
-       last_name          = "Ketchum"
-       login              = "diana@lacework.net"
-       email              = "diana@lacework.net"
-       custom_profile_attributes = "{ \"company\" : \"Cerise Laboratory\", \"laceworkOrgAdminRole\" : true }"
-     }
-     ```
-   - Grant the test user access to the Lacework app.
-      ```terraform
-        resource "okta_app_user" "test_lw_user" {
+      # [OPTIONAL] Add a Okta User for testing 
+      resource "okta_user" "demo_okta_user" {
+        first_name = "Ash"
+        last_name  = "Ketchum"
+        login      = "diana@lacework.com"
+        email      = "diana@lacework.com"
+      }
+
+      # [OPTIONAL] Grant the test user access to the Lacework Application
+      resource "okta_app_user" "demo_lw_user" {
         app_id   = okta_app_saml.lacework-okta-demo.id
-        user_id  = okta_user.test_user.id
-        profile  = okta_user.test_user.custom_profile_attributes
+        user_id  = okta_user.demo_okta_user.id
+        username = "diana@lacework.com"
+        profile  = "{ \"company\" : \"Oak's Laboratory\", \"laceworkOrgAdminRole\" : true }"
       }
       ```
     
