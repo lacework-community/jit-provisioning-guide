@@ -222,16 +222,12 @@ Note: The full example can be found [here](example-lw+okta.tf).
 
 * **2F**. Obtain the Okta app's metadata XML
 
-  -  Call the `okta_app_metadata_saml` data source as
     ```terraform
-    data "okta_app_metadata_saml" "dianademo" {
-      app_id = okta_app_saml.lacework-okta-demo.id
-    }
-
-    output "dianademo" {
-      value = data.okta_app_metadata_saml.dianademo.metadata
+    output "xml" {
+      value = okta_app_saml.lacework-okta-demo.metadata
     }
     ```
+    
 * **2G**. Download the metadata locally. 
 
   Note: Refer to [example-metadata.xml](example-metadata.xml) to see what the XML file looks like.
@@ -239,7 +235,7 @@ Note: The full example can be found [here](example-lw+okta.tf).
   Note: This example uses [jq](https://stedolan.github.io/jq/) to obtain the XML file:
     ```bash
     terraform refresh
-    terraform output -json | jq  .dianademo.value -r > example-metadata.xml
+    terraform output -json | jq  .xml.value -r > example-metadata.xml
     ```
 
 ### **3**. Configure Lacework (via the user interface). <!-- omit in toc -->

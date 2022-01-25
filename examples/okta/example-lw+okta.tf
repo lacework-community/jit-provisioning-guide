@@ -175,3 +175,9 @@ resource "okta_app_user" "demo_lw_user" {
   username = "diana@lacework.com"
   profile  = "{ \"company\" : \"Oak's Laboratory\", \"laceworkOrgAdminRole\" : true }"
 }
+
+
+# Obtain the metadata XML programmatically
+output "xml" {
+  value = okta_app_saml.lacework-okta-demo.metadata
+}
