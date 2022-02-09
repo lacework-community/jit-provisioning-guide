@@ -28,7 +28,7 @@ resource "okta_app_saml" "lacework-okta-demo" {
   response_signed          = true
   signature_algorithm      = "RSA_SHA256"
   digest_algorithm         = "SHA256"
-  honor_force_authn        = false
+  honor_force_authn        = true
   authn_context_class_ref  = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
 
   user_name_template      = "$${source.email}"
@@ -51,31 +51,31 @@ resource "okta_app_saml" "lacework-okta-demo" {
     type      = "EXPRESSION"
     name      = "Company Name"
     namespace = "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"
-    values    = ["user.company"]
+    values    = ["appuser.company"]
   }
   attribute_statements {
     type      = "EXPRESSION"
     name      = "Lacework Admin Role Accounts"
     namespace = "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"
-    values    = ["user.laceworkAdminRoleAccounts"]
+    values    = ["appuser.laceworkAdminRoleAccounts"]
   }
   attribute_statements {
     type      = "EXPRESSION"
     name      = "Lacework User Role Accounts"
     namespace = "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"
-    values    = ["user.laceworkUserRoleAccounts"]
+    values    = ["appuser.laceworkUserRoleAccounts"]
   }
   attribute_statements {
     type      = "EXPRESSION"
     name      = "Lacework Organization Admin Role"
     namespace = "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"
-    values    = ["user.laceworkOrgAdminRole"]
+    values    = ["appuser.laceworkOrgAdminRole"]
   }
   attribute_statements {
     type      = "EXPRESSION"
     name      = "Lacework Organization User Role"
     namespace = "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"
-    values    = ["user.laceworkOrgUserRole"]
+    values    = ["appuser.laceworkOrgUserRole"]
   }
 }
 
@@ -160,7 +160,8 @@ resource "okta_app_user_schema_property" "laceworkOrgUserRole" {
 #   scope       = "NONE"
 # }
 
-# [OPTIONAL] Add a Okta User for testing 
+# [OPTIONAL] ##################################################################
+# Add a Okta User for testing 
 resource "okta_user" "demo_okta_user" {
   first_name = "Ash"
   last_name  = "Ketchum"
@@ -168,16 +169,26 @@ resource "okta_user" "demo_okta_user" {
   email      = "diana@lacework.com"
 }
 
-# [OPTIONAL] Grant the test user access to the Lacework Application
+#  Grant the test user access to the Lacework Application
 resource "okta_app_user" "demo_lw_user" {
   app_id   = okta_app_saml.lacework-okta-demo.id
   user_id  = okta_user.demo_okta_user.id
   username = "diana@lacework.com"
-  profile  = "{ \"company\" : \"Oak's Laboratory\", \"laceworkOrgAdminRole\" : true }"
+  # Set appropiate priviliges here! Follow PoLP
+  profile = <<-EOL
+{ 
+    "company"                   : "Oak's Laboratory",
+    "laceworkOrgAdminRole"      : false, 
+    "laceworkOrgUserRole"       : false,
+    "laceworkUserRoleAccounts"  : "lwintdiana",
+    "laceworkAdminRoleAccounts" : "lwintdiana"
+}   
+EOL
 }
+###############################################################################
 
 
-# Obtain the metadata XML programmatically
+# Obtain the IdP metadata programmatically
 output "xml" {
   value = okta_app_saml.lacework-okta-demo.metadata
 }
